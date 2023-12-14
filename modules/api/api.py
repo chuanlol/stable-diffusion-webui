@@ -323,6 +323,8 @@ class Api:
         # Now check for always on scripts
         if request.alwayson_scripts:
             for alwayson_script_name in request.alwayson_scripts.keys():
+                if alwayson_script_name in ["image_link", "sd_model_checkpoint", "save_dir"]:
+                    continue
                 alwayson_script = self.get_script(alwayson_script_name, script_runner)
                 if alwayson_script is None:
                     raise HTTPException(status_code=422, detail=f"always on script {alwayson_script_name} not found")
@@ -416,7 +418,7 @@ class Api:
         args.pop('include_init_images', None)  # this is meant to be done by "exclude": True in model, but it's for a reason that I cannot determine.
         args.pop('script_name', None)
         args.pop('script_args', None)  # will refeed them to the pipeline directly after initializing them
-        args.pop('alwayson_scripts', None)
+        # args.pop('alwayson_scripts', None)
 
         script_args = self.init_script_args(img2imgreq, self.default_script_arg_img2img, selectable_scripts, selectable_script_idx, script_runner)
 
@@ -430,7 +432,9 @@ class Api:
                 p.scripts = script_runner
                 p.outpath_grids = opts.outdir_img2img_grids
                 p.outpath_samples = opts.outdir_img2img_samples
-
+                if img2imgreq.alwayson_scripts:
+                    if img2imgreq.alwayson_scripts["save_dir"]:
+                        p.outpath_samples = img2imgreq.alwayson_scripts["save_dir"]
                 try:
                     shared.state.begin(job="scripts_img2img")
                     if selectable_scripts is not None:

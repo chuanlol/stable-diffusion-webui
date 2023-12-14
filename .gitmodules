@@ -1,0 +1,6 @@
+[submodule "extensions/gif2gif"]
+	path = extensions/gif2gif
+	url = https://github.com/chuanlol/gif2gif.git
+[submodule "extensions/sd-webui-reactor"]
+	path = extensions/sd-webui-reactor
+	url = https://github.com/chuanlol/sd-webui-reactor.git

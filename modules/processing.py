@@ -1358,7 +1358,8 @@ class StableDiffusionProcessingImg2Img(StableDiffusionProcessing):
     inpainting_mask_invert: int = 0
     initial_noise_multiplier: float = None
     latent_mask: Image = None
-
+    alwayson_scripts: dict = None
+    
     image_mask: Any = field(default=None, init=False)
 
     nmask: torch.Tensor = field(default=None, init=False)
@@ -1438,8 +1439,12 @@ class StableDiffusionProcessingImg2Img(StableDiffusionProcessing):
         if add_color_corrections:
             self.color_corrections = []
         imgs = []
+        if self.alwayson_scripts is not None and "image_link" in self.alwayson_scripts:
+            print(f"using image_link: {self.alwayson_scripts['image_link']}")
+            image = Image.open(self.alwayson_scripts["image_link"])
+            self.init_images.append(image)
         for img in self.init_images:
-
+            print(img)
             # Save init image
             if opts.save_init_img:
                 self.init_img_hash = hashlib.md5(img.tobytes()).hexdigest()
